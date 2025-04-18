@@ -1,0 +1,160 @@
+<<<<<<< Updated upstream
+# Dependency directories
+node_modules/
+jspm_packages/
+=======
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+>>>>>>> Stashed changes
+
+# Environment variables
+.env
+.env.local
+<<<<<<< Updated upstream
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Debug logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Build / compiled files
+dist/
+build/
+coverage/
+=======
+.env.development
+.env.test
+.env.production
+.env*.local
+
+# Build / compiled files
+/dist
+/build
+/out
+/.next
+/.nuxt
+
+# Coverage reports
+/coverage
+.nyc_output
+
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Debug
+.DS_Store
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Upload directory for user-generated content
+/uploads/*
+!/uploads/.gitkeep
+>>>>>>> Stashed changes
+
+# Cache and temp files
+.npm
+.eslintcache
+<<<<<<< Updated upstream
+.yarn-integrity
+.cache
+.next
+.nuxt
+.temp
+.vuepress/dist
+.docusaurus
+
+# IDE / Editor configs
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage/
+.nyc_output/
+
+# Database
+*.sqlite
+*.sqlite3
+uploads/
+
+# Temporary files
+temp/
+tmp/
+
+# Thunder Client export files
+thunder-tests/
+thunder-collection_*.json
+thunder-environment_*.json
+thunder-client-*.json
+
+# Common config files
+*.pem
+*.key
+*.cert
+*.crt
+=======
+.stylelintcache
+.node_repl_history
+.yarn-integrity
+.cache
+.parcel-cache
+.temp
+temp/
+tmp/
+
+# Database files
+*.sqlite
+*.sqlite3
+*.db
+
+# Testing
+/cypress/videos/
+/cypress/screenshots/
+
+# Thunder Client collections
+thunder-tests/
+thunder-client.json
+thunder-collection_*
+thunder-environment_*
+
+# Misc
+.DS_Store
+Thumbs.db
+*.pem
+*.cert
+*.key
+
+# Documentation
+/docs/generated
+
+# Local deployment
+.vercel
+.netlify
+>>>>>>> Stashed changes
