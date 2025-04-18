@@ -34,7 +34,7 @@ const debugAuth = () => {
 // Create axios instance with default config
 const api = axios.create({
 
-  baseURL: "http://localhost:5000/api",
+  baseURL: "http://13.232.180.68:5000/api",
   headers: {
     'Content-Type': 'application/json'
   }
