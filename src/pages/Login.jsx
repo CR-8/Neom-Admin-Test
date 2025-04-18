@@ -63,20 +63,27 @@ const Login = () => {
 
     try {
       const response = await authAPI.login(formData);
+      console.log('Login response:', response.data);
       
-      if (response?.data?.token && response?.data?.user) {
-        // Check if user has admin role
-        if (response.data.user.role !== 'admin') {
-          throw new Error('Access denied. Only admin users can access this dashboard.');
-        }
-        
-        // Store auth data
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data.user));
-        
-        enqueueSnackbar('Login successful!', { variant: 'success' });
-        navigate('/');
+      // The user data is nested inside response.data.data.user
+      const { token, data } = response.data;
+      const userData = data?.user;
+      
+      if (!token || !userData) {
+        throw new Error('Invalid login response: missing token or user data');
       }
+      
+      // Check if user has admin role
+      if (userData.role !== 'admin') {
+        throw new Error('Access denied. Only admin users can access this dashboard.');
+      }
+      
+      // Store auth data
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(userData));
+      
+      enqueueSnackbar('Login successful!', { variant: 'success' });
+      navigate('/');
     } catch (error) {
       console.error('Login error:', error);
       const errorMessage = error.response?.data?.message || error.message || 'Login failed';

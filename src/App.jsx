@@ -9,30 +9,33 @@ import Dashboard from './pages/Dashboard';
 import Settings from './pages/Settings';
 import Notifications from './pages/Notifications';
 import ProtectedRoute from './components/ProtectedRoute';
+import { TabStateProvider } from './contexts/TabStateContext';
 
 const App = () => {
   return (
     <ThemeProvider>
       <CssBaseline />
       <SnackbarProvider maxSnack={3}>
-        <Router>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route
-              path="/"
-              element={
-                <ProtectedRoute>
-                  <Layout />
-                </ProtectedRoute>
-              }
-            >
-              <Route index element={<Dashboard />} />
-              <Route path="settings" element={<Settings />} />
-              <Route path="notifications" element={<Notifications />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Route>
-          </Routes>
-        </Router>
+        <TabStateProvider>
+          <Router>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute>
+                    <Layout />
+                  </ProtectedRoute>
+                }
+              >
+                <Route index element={<Dashboard />} />
+                <Route path="settings" element={<Settings />} />
+                <Route path="notifications" element={<Notifications />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Route>
+            </Routes>
+          </Router>
+        </TabStateProvider>
       </SnackbarProvider>
     </ThemeProvider>
   );
