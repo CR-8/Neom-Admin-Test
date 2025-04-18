@@ -327,22 +327,14 @@ const Dashboard = () => {
   }, [fetchDashboardData]);
 
   // Handle export
-  const handleExport = useCallback((format) => {
+  const handleExport = useCallback(async (format) => {
     try {
-      // Implementation will depend on your export needs
-      enqueueSnackbar(`Exporting data as ${format.toUpperCase()}`, { 
-        variant: "info" 
-      });
-      
-      // Call export function and handle the result
-      // This would integrate with your exportAnalyticsData function
-      // from analyticsData.js
-      
+      await exportAnalyticsData(analyticsData, format);
+      enqueueSnackbar(`Data exported as ${format.toUpperCase()}`, { variant: "success" });
     } catch (error) {
-      console.error("Export error:", error);
       enqueueSnackbar("Export failed", { variant: "error" });
     }
-  }, [enqueueSnackbar]);
+  }, [analyticsData, enqueueSnackbar]);
 
   // Show loading state
   if (loading && !refreshing) {
@@ -377,6 +369,50 @@ const Dashboard = () => {
       </Box>
     );
   }
+
+  const renderStatCard = (title, value, trend, icon, color) => (
+    <Grid item xs={12} sm={6} md={3}>
+      <Paper
+        sx={{
+          p: 2,
+          display: "flex",
+          flexDirection: "column",
+          height: 140,
+          background: alpha(theme.palette[color].main, 0.1),
+        }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+          {React.createElement(icon, { sx: { color: `${color}.main`, mr: 1 } })}
+          <Typography variant="subtitle2" color="text.secondary">
+            {title}
+          </Typography>
+        </Box>
+        <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
+          {title.includes("Revenue") ? formatCurrency(value) : value}
+        </Typography>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Typography
+            variant="body2"
+            sx={{
+              color: trend >= 0 ? "success.main" : "error.main",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            {trend >= 0 ? <ArrowUpwardIcon fontSize="small" /> : <ArrowDownwardIcon fontSize="small" />}
+            {Math.abs(trend)}%
+          </Typography>
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            sx={{ ml: 1 }}
+          >
+            vs last period
+          </Typography>
+        </Box>
+      </Paper>
+    </Grid>
+  );
 
   return (
     <Box sx={{ p: isMobile ? 2 : 3 }}>
@@ -438,188 +474,10 @@ const Dashboard = () => {
 
       {/* Stats Cards */}
       <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid item xs={12} sm={6} md={3}>
-          <Paper
-            sx={{
-              p: 2,
-              display: "flex",
-              flexDirection: "column",
-              height: 140,
-              background: alpha(theme.palette.primary.main, 0.1),
-            }}
-          >
-            <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-              <UsersIcon sx={{ color: "primary.main", mr: 1 }} />
-              <Typography variant="subtitle2" color="text.secondary">
-                Total Users
-              </Typography>
-            </Box>
-            <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
-              {stats.totalUsers}
-            </Typography>
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Typography
-                variant="body2"
-                sx={{
-                  color: stats.usersTrend >= 0 ? "success.main" : "error.main",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                {stats.usersTrend >= 0 ? (
-                  <ArrowUpwardIcon fontSize="small" />
-                ) : (
-                  <ArrowDownwardIcon fontSize="small" />
-                )}
-                {Math.abs(stats.usersTrend)}%
-              </Typography>
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                sx={{ ml: 1 }}
-              >
-                vs last period
-              </Typography>
-            </Box>
-          </Paper>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Paper
-            sx={{
-              p: 2,
-              display: "flex",
-              flexDirection: "column",
-              height: 140,
-              background: alpha(theme.palette.secondary.main, 0.1),
-            }}
-          >
-            <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-              <OrdersIcon sx={{ color: "secondary.main", mr: 1 }} />
-              <Typography variant="subtitle2" color="text.secondary">
-                Total Orders
-              </Typography>
-            </Box>
-            <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
-              {stats.totalOrders}
-            </Typography>
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Typography
-                variant="body2"
-                sx={{
-                  color: stats.ordersTrend >= 0 ? "success.main" : "error.main",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                {stats.ordersTrend >= 0 ? (
-                  <ArrowUpwardIcon fontSize="small" />
-                ) : (
-                  <ArrowDownwardIcon fontSize="small" />
-                )}
-                {Math.abs(stats.ordersTrend)}%
-              </Typography>
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                sx={{ ml: 1 }}
-              >
-                vs last period
-              </Typography>
-            </Box>
-          </Paper>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Paper
-            sx={{
-              p: 2,
-              display: "flex",
-              flexDirection: "column",
-              height: 140,
-              background: alpha(theme.palette.info.main, 0.1),
-            }}
-          >
-            <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-              <ProductsIcon sx={{ color: "info.main", mr: 1 }} />
-              <Typography variant="subtitle2" color="text.secondary">
-                Total Products
-              </Typography>
-            </Box>
-            <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
-              {stats.totalProducts}
-            </Typography>
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Typography
-                variant="body2"
-                sx={{
-                  color:
-                    stats.productsTrend >= 0 ? "success.main" : "error.main",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                {stats.productsTrend >= 0 ? (
-                  <ArrowUpwardIcon fontSize="small" />
-                ) : (
-                  <ArrowDownwardIcon fontSize="small" />
-                )}
-                {Math.abs(stats.productsTrend)}%
-              </Typography>
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                sx={{ ml: 1 }}
-              >
-                vs last period
-              </Typography>
-            </Box>
-          </Paper>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Paper
-            sx={{
-              p: 2,
-              display: "flex",
-              flexDirection: "column",
-              height: 140,
-              background: alpha(theme.palette.success.main, 0.1),
-            }}
-          >
-            <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-              <RevenueIcon sx={{ color: "success.main", mr: 1 }} />
-              <Typography variant="subtitle2" color="text.secondary">
-                Total Revenue
-              </Typography>
-            </Box>
-            <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
-              {formatCurrency(stats.totalRevenue)}
-            </Typography>
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Typography
-                variant="body2"
-                sx={{
-                  color:
-                    stats.revenueTrend >= 0 ? "success.main" : "error.main",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                {stats.revenueTrend >= 0 ? (
-                  <ArrowUpwardIcon fontSize="small" />
-                ) : (
-                  <ArrowDownwardIcon fontSize="small" />
-                )}
-                {Math.abs(stats.revenueTrend)}%
-              </Typography>
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                sx={{ ml: 1 }}
-              >
-                vs last period
-              </Typography>
-            </Box>
-          </Paper>
-        </Grid>
+        {renderStatCard("Total Users", stats.totalUsers, stats.usersTrend, UsersIcon, "primary")}
+        {renderStatCard("Total Orders", stats.totalOrders, stats.ordersTrend, OrdersIcon, "secondary")}
+        {renderStatCard("Total Products", stats.totalProducts, stats.productsTrend, ProductsIcon, "info")}
+        {renderStatCard("Total Revenue", stats.totalRevenue, stats.revenueTrend, RevenueIcon, "success")}
       </Grid>
 
       {/* Charts Section */}
@@ -700,6 +558,7 @@ const Dashboard = () => {
         <MenuItem
           onClick={() => {
             setReportMenuAnchor(null); /* Handle PDF export */
+            handleExport('pdf');
           }}
         >
           <ListItemIcon>
@@ -710,6 +569,7 @@ const Dashboard = () => {
         <MenuItem
           onClick={() => {
             setReportMenuAnchor(null); /* Handle CSV export */
+            handleExport('csv');
           }}
         >
           <ListItemIcon>
@@ -720,6 +580,7 @@ const Dashboard = () => {
         <MenuItem
           onClick={() => {
             setReportMenuAnchor(null); /* Handle JSON export */
+            handleExport('json');
           }}
         >
           <ListItemIcon>
