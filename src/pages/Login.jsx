@@ -66,16 +66,23 @@ const Login = () => {
       const response = await authAPI.login(formData);
       console.log('Login response:', response);
       
-      if (response?.data?.token && response?.data?.user) {
-        console.log('User data:', response.data.user);
+      // Check if we have a valid response with data
+      if (response?.data) {
+        const { token, user } = response.data;
+        
+        if (!token || !user) {
+          throw new Error('Invalid response format: missing token or user data');
+        }
+        
+        console.log('User data:', user);
         // Check if user has admin role
-        if (response.data.user.role !== 'admin') {
+        if (user.role !== 'admin') {
           throw new Error('Access denied. Only admin users can access this dashboard.');
         }
         
         // Store auth data
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data.user));
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
         console.log('Auth data stored successfully');
         
         enqueueSnackbar('Login successful!', { variant: 'success' });
