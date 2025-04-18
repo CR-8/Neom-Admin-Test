@@ -62,47 +62,23 @@ const Login = () => {
     setLoading(true);
 
     try {
-      console.log('Attempting login with:', { email: formData.email });
       const response = await authAPI.login(formData);
-      console.log('Full login response:', JSON.stringify(response, null, 2));
       
-      // Check if we have a valid response with data
-      if (response?.data) {
-        const { token, data } = response.data;
-        
-        if (!token || !data?.user) {
-          console.error('Missing data in response:', {
-            token: !!token,
-            user: !!data?.user,
-            availableKeys: Object.keys(response.data)
-          });
-          throw new Error('Invalid response format: missing token or user data');
-        }
-        
-        const userData = data.user;
-        console.log('Extracted auth data:', { token, userData });
-        
+      if (response?.data?.token && response?.data?.user) {
         // Check if user has admin role
-        if (userData.role !== 'admin') {
+        if (response.data.user.role !== 'admin') {
           throw new Error('Access denied. Only admin users can access this dashboard.');
         }
         
         // Store auth data
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(userData));
-        console.log('Auth data stored successfully');
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
         
         enqueueSnackbar('Login successful!', { variant: 'success' });
         navigate('/');
-      } else {
-        throw new Error('Invalid response format from server');
       }
     } catch (error) {
-      console.error('Login error details:', {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status
-      });
+      console.error('Login error:', error);
       const errorMessage = error.response?.data?.message || error.message || 'Login failed';
       setError(errorMessage);
       enqueueSnackbar(errorMessage, { variant: 'error' });

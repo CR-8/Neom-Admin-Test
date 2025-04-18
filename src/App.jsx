@@ -12,7 +12,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 const App = () => {
   return (
-    <ThemeProvider>
+    <ThemeProvider >
       <CssBaseline />
       <SnackbarProvider maxSnack={3}>
         <Router>
