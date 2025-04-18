@@ -5,12 +5,10 @@ export default defineConfig(({ mode }) => {
   // Load env variables
   const env = loadEnv(mode, process.cwd(), '');
   
-  // Get API port from environment or fallback to 6000
-  const API_PORT = env.PORT || 6000;
-  
   return {
     plugins: [react()],
     server: {
+
       port: 5173,
       proxy: {
         "/api": {
