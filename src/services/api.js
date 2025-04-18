@@ -33,10 +33,6 @@ const debugAuth = () => {
 
 // Create axios instance with default config
 const api = axios.create({
-<<<<<<< Updated upstream
-=======
-  API_PORT : import.meta.env.PORT || 5000,
->>>>>>> Stashed changes
   baseURL: import.meta.env.VITE_API_URL,
   headers: {
     'Content-Type': 'application/json'
