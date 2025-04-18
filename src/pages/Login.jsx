@@ -68,18 +68,20 @@ const Login = () => {
       
       // Check if we have a valid response with data
       if (response?.data) {
-        const { token, data: userData } = response.data;
+        const { token, data } = response.data;
         
-        if (!token || !userData) {
+        if (!token || !data?.user) {
           console.error('Missing data in response:', {
             token: !!token,
-            userData: !!userData,
+            user: !!data?.user,
             availableKeys: Object.keys(response.data)
           });
           throw new Error('Invalid response format: missing token or user data');
         }
         
+        const userData = data.user;
         console.log('Extracted auth data:', { token, userData });
+        
         // Check if user has admin role
         if (userData.role !== 'admin') {
           throw new Error('Access denied. Only admin users can access this dashboard.');
