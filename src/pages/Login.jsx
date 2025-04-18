@@ -64,17 +64,29 @@ const Login = () => {
     try {
       console.log('Attempting login with:', { email: formData.email });
       const response = await authAPI.login(formData);
-      console.log('Login response:', response);
+      console.log('Full login response:', JSON.stringify(response, null, 2));
+      console.log('Response data structure:', {
+        hasData: !!response?.data,
+        dataKeys: response?.data ? Object.keys(response.data) : [],
+        dataType: response?.data ? typeof response.data : 'undefined'
+      });
       
       // Check if we have a valid response with data
       if (response?.data) {
-        const { token, user } = response.data;
+        // Try to find token and user data in different possible locations
+        const token = response.data.token || response.data.accessToken || response.data.access_token;
+        const user = response.data.user || response.data.userData || response.data.user_data;
         
         if (!token || !user) {
+          console.error('Missing data in response:', {
+            token: !!token,
+            user: !!user,
+            availableKeys: Object.keys(response.data)
+          });
           throw new Error('Invalid response format: missing token or user data');
         }
         
-        console.log('User data:', user);
+        console.log('Extracted auth data:', { token, user });
         // Check if user has admin role
         if (user.role !== 'admin') {
           throw new Error('Access denied. Only admin users can access this dashboard.');
