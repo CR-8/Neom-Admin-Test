@@ -62,9 +62,12 @@ const Login = () => {
     setLoading(true);
 
     try {
+      console.log('Attempting login with:', { email: formData.email });
       const response = await authAPI.login(formData);
+      console.log('Login response:', response);
       
       if (response?.data?.token && response?.data?.user) {
+        console.log('User data:', response.data.user);
         // Check if user has admin role
         if (response.data.user.role !== 'admin') {
           throw new Error('Access denied. Only admin users can access this dashboard.');
@@ -73,12 +76,19 @@ const Login = () => {
         // Store auth data
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
+        console.log('Auth data stored successfully');
         
         enqueueSnackbar('Login successful!', { variant: 'success' });
         navigate('/');
+      } else {
+        throw new Error('Invalid response format from server');
       }
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('Login error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
       const errorMessage = error.response?.data?.message || error.message || 'Login failed';
       setError(errorMessage);
       enqueueSnackbar(errorMessage, { variant: 'error' });
